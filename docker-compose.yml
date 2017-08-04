@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  manga.api:
+    image: manga.api
+    build:
+      context: ./Manga.Api
+      dockerfile: Dockerfile
