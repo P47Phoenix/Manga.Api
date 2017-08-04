@@ -16,21 +16,22 @@ namespace Manga.Api.Controllers
         {
             var key = typeof(GenericKey<T, T1>);
 
-            if (_dictionary.ContainsKey(key) == false)
+            if (_dictionary.ContainsKey(key)) return (IRepository<T, T1>) _dictionary[key];
+
+            if (typeof(Chapter) == typeof(T1) && typeof(string) == typeof(T))
             {
-                if (typeof(MangaChapter) == typeof(T1) && typeof(string) == typeof(T))
-                {
-                    _dictionary.Add(key, BuildSimulatorModel.GetMangaChapter());
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Factory does not support the requested repository of {typeof(IRepository<T, T1>).Name}");
-                }
+                _dictionary.Add(key, BuildSimulatorModel.GetMangaChapter());
+            }
+            else if (typeof(Series) == typeof(T1) && typeof(string) == typeof(T))
+            {
+                _dictionary.Add(key, BuildSimulatorModel.GetSeriesChapter());
+            }
+            else
+            {
+                throw new InvalidOperationException($"Factory does not support the requested repository of {typeof(IRepository<T, T1>).Name}");
             }
 
-
             return (IRepository<T, T1>)_dictionary[key];
-
         }
     }
 }

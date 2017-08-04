@@ -8,10 +8,10 @@ namespace Ifx.JsonApi
 {
     public class JsonApiBody<T> where T : class, new()
     {
-        public JsonApiBody(IEnumerable<JsonApiDocument<T>> documents)
+        public JsonApiBody(IEnumerable<T> documents)
         {
             Links = new Dictionary<string, string>();
-            Body = documents.ToList();
+            Body = documents.Select(d => new JsonApiDocument<T>(d)).ToList();
         }
 
         public Dictionary<string, string> Links { get; }

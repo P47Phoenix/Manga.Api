@@ -6,7 +6,7 @@ namespace Manga.Api.Controllers
 {
     public class DictionaryRepository<TKey, TValue> : IRepository<TKey, TValue> where TValue : class
     {
-        private ConcurrentDictionary<TKey, TValue> m_ConcurrentDictionary = new ConcurrentDictionary<TKey, TValue>();
+        private readonly ConcurrentDictionary<TKey, TValue> m_ConcurrentDictionary = new ConcurrentDictionary<TKey, TValue>();
 
         public IEnumerable<TValue> GetAll()
         {

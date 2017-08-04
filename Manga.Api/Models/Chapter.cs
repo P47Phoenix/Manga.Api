@@ -6,7 +6,7 @@ using Ifx.JsonApi;
 
 namespace Manga.Api.Models
 {
-    public class MangaChapter
+    public class Chapter
     {
         [JsonApiId]
         public string ChapterId { get; set; }
