@@ -15,25 +15,30 @@ namespace Manga.Api.Controllers
     [ApiVersion("0")]
     public class ChapterController : Controller
     {
-        private readonly IRepository<string, Chapter> m_repository;
+        private readonly IRepository<string, string, Chapter> m_repository;
 
         public ChapterController(IRepositoryFactory repositoryFactory)
         {
-            m_repository = repositoryFactory.CreateRepository<string, Chapter>();
+            m_repository = repositoryFactory.CreateRepository<string, string, Chapter>();
         }
 
-        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter", Name = "MangaChapterGet")]
+        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter", Name = "ChapterGet")]
         public IActionResult Get(string mangaSeriesId)
         {
-            var chapters = m_repository.GetAll().ToList();
+            var chapters = m_repository.GetAll(key => key.RefId == mangaSeriesId).ToList();
 
             return Ok(new JsonApiBody<Chapter>(chapters));
         }
 
-        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "MangaChapterGetById")]
+        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "ChapterGetById")]
         public IActionResult Get(string mangaSeriesId, string id)
         {
-            Chapter chapter = m_repository.Get(id);
+            Chapter chapter = m_repository.Get(
+                new KeyValue<string, string>
+                {
+                    Id = id,
+                    RefId = mangaSeriesId
+                });
 
             if (chapter == null)
             {
@@ -48,34 +53,51 @@ namespace Manga.Api.Controllers
         }
 
         // POST: api/MangaChapter
-        [HttpPost("api/Manga/Series/{mangaSeriesId}/Chapter", Name = "MangaChapterPost")]
+        [HttpPost("api/Manga/Series/{mangaSeriesId}/Chapter", Name = "ChapterPost")]
         public IActionResult Post(string mangaSeriesId, [FromBody]JsonApiDocument<Chapter> value)
         {
             var model = value.Get();
 
-            m_repository.AddOrUpdate(model, chapter => chapter.ChapterId);
+            m_repository.AddOrUpdate(model, chapter => new KeyValue<string, string>
+            {
+                Id = chapter.ChapterId,
+                RefId = mangaSeriesId
+            });
 
             var body = new JsonApiBody<Chapter>(new[] { model });
 
             return CreatedAtRoute("MangaChapterGetById", new { id = model.ChapterId, mangaSeriesId }, body);
         }
 
-        [HttpPut("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "MangaChapterPut")]
+        [HttpPut("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "ChapterPut")]
         public IActionResult Put(string mangaSeriesId, string id, [FromBody]JsonApiDocument<Chapter> value)
         {
             var model = value.Get();
 
-            m_repository.AddOrUpdate(model, chapter => id);
+            m_repository.AddOrUpdate(model, chapter => new KeyValue<string, string>()
+            {
+                Id = id,
+                RefId = mangaSeriesId
+            });
 
-            var body = new JsonApiBody<Chapter>(new[] {model});
+
+            var body = new JsonApiBody<Chapter>(new[] { model });
 
             return CreatedAtRoute("MangaChapterGetById", new { id = model.ChapterId, mangaSeriesId }, body);
         }
 
-        [HttpDelete("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "MangaChapterDelete")]
+        [HttpDelete("api/Manga/Series/{mangaSeriesId}/Chapter/{id}", Name = "ChapterDelete")]
         public IActionResult Delete(string mangaSeriesId, string id)
         {
-            if (m_repository.Get(id) == null)
+            var key = new KeyValue<string, string>()
+            {
+                Id = id,
+                RefId = mangaSeriesId
+            };
+
+            var record = m_repository.Get(key);
+
+            if (record == null)
             {
                 return NotFound(new
                 {
@@ -84,7 +106,7 @@ namespace Manga.Api.Controllers
                 });
             }
 
-            m_repository.RemoveById(id);
+            m_repository.RemoveById(key);
 
             return Ok();
         }

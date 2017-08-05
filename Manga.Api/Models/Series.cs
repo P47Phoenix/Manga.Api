@@ -11,6 +11,10 @@ namespace Manga.Api.Models
         [JsonApiId]
         public string SeriesId { get; set; }
 
+        [JsonApiRelation(typeof(Chapter), "ChapterGet", new[] { "SeriesId" })]
+
+        public List<string> ChapterIds { get; set; }
+
         public string Name { get; set; }
     }
 }

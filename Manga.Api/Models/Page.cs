@@ -6,17 +6,15 @@ using Ifx.JsonApi;
 
 namespace Manga.Api.Models
 {
-    public class Chapter
+    public class Page
     {
         [JsonApiId]
-        public string ChapterId { get; set; }
+        public string PageId { get; set; }
 
         [JsonApiRelation(typeof(Series), "SeriesGet")]
         public string SeriesId { get; set; }
 
-        [JsonApiRelation(typeof(Page), "PageGet", new[] { "SeriesId", "ChapterId" })]
-        public List<string> PageIds { get; set; }
-
-        public string Name { get; set; }
+        [JsonApiRelation(typeof(Series), "ChapterGet", new[] { "SeriesId" })]
+        public string ChapterId { get; set; }
     }
 }

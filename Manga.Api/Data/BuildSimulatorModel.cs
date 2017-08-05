@@ -1,87 +1,101 @@
-﻿using Manga.Api.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Manga.Api.Models;
 using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json.Linq;
 
 namespace Manga.Api.Controllers
 {
     internal static class BuildSimulatorModel
     {
-        public static DictionaryRepository<string, Chapter> GetMangaChapter()
-        {
-            var repo = new DictionaryRepository<string, Chapter>();
+        private static List<string> m_ItemIds
+            ;
 
-            repo.AddOrUpdate(new Chapter()
+        private static IEnumerable<string> GetIdList(int numberOfIds = 6)
+        {
+            for (var id = 0; id < numberOfIds; id++)
             {
-                Name = "Chapter one",
-                ChapterId = "1"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
+                yield return id.ToString();
+            }
+        }
+
+        static BuildSimulatorModel()
+        {
+            m_ItemIds = GetIdList().ToList();
+        }
+
+
+        public static DictionaryRepository<string, string, Chapter> GetMangaChapter()
+        {
+            var repo = new DictionaryRepository<string, string, Chapter>();
+
+
+            foreach (var seriesId in m_ItemIds)
             {
-                Name = "Chapter one",
-                ChapterId = "1"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
-            {
-                Name = "Chapter two",
-                ChapterId = "2"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
-            {
-                Name = "Chapter three",
-                ChapterId = "3"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
-            {
-                Name = "Chapter four",
-                ChapterId = "4"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
-            {
-                Name = "Chapter five",
-                ChapterId = "5"
-            }, chapter => chapter.ChapterId);
-            repo.AddOrUpdate(new Chapter()
-            {
-                Name = "Chapter six",
-                ChapterId = "6"
-            }, chapter => chapter.ChapterId);
+
+                foreach (var chapterId in m_ItemIds)
+                {
+
+                    repo.AddOrUpdate(new Chapter()
+                    {
+                        Name = "Chapter " + chapterId,
+                        ChapterId = chapterId,
+                        SeriesId = seriesId,
+                        PageIds = m_ItemIds,
+                    }, chapter => new KeyValue<string, string>
+                    {
+                        Id = chapter.ChapterId,
+                        RefId = seriesId
+                    });
+                }
+            }
 
             return repo;
         }
 
-        public static IRepository<string, Series> GetSeriesChapter()
+        public static IRepository<string, string, Series> GetSeriesChapter()
         {
-            var repo = new DictionaryRepository<string, Series>();
+            var repo = new DictionaryRepository<string, string, Series>();
 
-            repo.AddOrUpdate(new Series()
+            foreach (var seriesId in m_ItemIds)
             {
-                Name = "Series one",
-                SeriesId = "1"
-            }, series => series.SeriesId);
-            repo.AddOrUpdate(new Series()
+                repo.AddOrUpdate(new Series()
+                {
+                    Name = "Series " + seriesId,
+                    SeriesId = seriesId,
+                    ChapterIds = m_ItemIds
+                }, series => new KeyValue<string, string>()
+                {
+                    Id = series.SeriesId
+                });
+
+            }
+
+            return repo;
+        }
+
+        public static IRepository<string, string, Page> GetPageChapter()
+        {
+            var repo = new DictionaryRepository<string, string, Page>();
+            foreach (var seriesId in m_ItemIds)
             {
-                Name = "Series one",
-                SeriesId = "2"
-            }, series => series.SeriesId);
-            repo.AddOrUpdate(new Series()
-            {
-                Name = "Series one",
-                SeriesId = "3"
-            }, series => series.SeriesId);
-            repo.AddOrUpdate(new Series()
-            {
-                Name = "Series one",
-                SeriesId = "4"
-            }, series => series.SeriesId);
-            repo.AddOrUpdate(new Series()
-            {
-                Name = "Series one",
-                SeriesId = "5"
-            }, series => series.SeriesId);
-            repo.AddOrUpdate(new Series()
-            {
-                Name = "Series one",
-                SeriesId = "6"
-            }, series => series.SeriesId);
+                foreach (var chapterId in m_ItemIds)
+                {
+                    foreach (var pageId in m_ItemIds)
+                    {
+                        repo.AddOrUpdate(new Page
+                        {
+                            SeriesId = seriesId,
+                            ChapterId = chapterId,
+                            PageId = pageId
+                        }, series => new KeyValue<string, string>()
+                        {
+                            Id = series.SeriesId,
+                            RefId = seriesId + "_" + chapterId
+                        });
+                    }
+                }
+            }
 
             return repo;
         }

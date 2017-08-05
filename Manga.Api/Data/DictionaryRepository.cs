@@ -1,31 +1,42 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Manga.Api.Controllers
 {
-    public class DictionaryRepository<TKey, TValue> : IRepository<TKey, TValue> where TValue : class
+    public class DictionaryRepository<TId, TRefKey, TRecord> : IRepository<TId, TRefKey, TRecord>
+        where TRecord : class
     {
-        private readonly ConcurrentDictionary<TKey, TValue> m_ConcurrentDictionary = new ConcurrentDictionary<TKey, TValue>();
 
-        public IEnumerable<TValue> GetAll()
+        private readonly ConcurrentDictionary<KeyValue<TId, TRefKey>, TRecord> m_ConcurrentDictionary = new ConcurrentDictionary<KeyValue<TId, TRefKey>, TRecord>();
+
+        public IEnumerable<TRecord> GetAll(Func<KeyValue<TId, TRefKey>, bool> filter = null)
         {
-            return m_ConcurrentDictionary.Values;
+            if (filter == null)
+            {
+                return m_ConcurrentDictionary.Values;
+            }
+            else
+            {
+
+                return m_ConcurrentDictionary.Where(keyPair => filter(keyPair.Key)).Select(record => record.Value);
+            }
         }
 
-        public TValue Get(TKey id)
+        public TRecord Get(KeyValue<TId, TRefKey> key)
         {
-            return m_ConcurrentDictionary.TryGetValue(id, out TValue record) ? record : null;
+            return m_ConcurrentDictionary.TryGetValue(key, out TRecord record) ? record : null;
         }
 
-        public void AddOrUpdate(TValue record, Func<TValue, TKey> getId)
+        public void AddOrUpdate(TRecord record, Func<TRecord, KeyValue<TId, TRefKey>> getId)
         {
-            m_ConcurrentDictionary.AddOrUpdate(getId.Invoke(record), key => record, (key, value) => record);
+            m_ConcurrentDictionary.AddOrUpdate(getId(record), key => record, (key, value) => record);
         }
 
-        public void RemoveById(TKey id)
+        public void RemoveById(KeyValue<TId, TRefKey> key)
         {
-            m_ConcurrentDictionary.TryRemove(id, out TValue value);
+            m_ConcurrentDictionary.TryRemove(key, out TRecord value);
         }
     }
 }

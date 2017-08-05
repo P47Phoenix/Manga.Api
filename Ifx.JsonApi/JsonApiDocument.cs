@@ -5,21 +5,34 @@ using System.Linq;
 
 namespace Ifx.JsonApi
 {
-    public class JsonApiDocument<T> where T : class, new()
+    public class JsonApiDocument<T> : IJsonApiDataDocument where T : class, new()
     {
         private T m_Record;
         private JsonApiId<T> m_JsonApiId;
-        private readonly Dictionary<string, object> m_Attributes;
-        private readonly Dictionary<string, PropertyDescriptor> m_propertyDescriptor;
+        private readonly Dictionary<string, object> m_Attributes = new Dictionary<string, object>();
+        private readonly Dictionary<string, PropertyDescriptor> m_AttributePropertyDescriptor = new Dictionary<string, PropertyDescriptor>();
+        private readonly Dictionary<string, PropertyDescriptor> m_RelationPropertyDescriptor = new Dictionary<string, PropertyDescriptor>();
 
         public JsonApiDocument(T record)
         {
-            m_propertyDescriptor = TypeDescriptor
+            var propertyDescriptors = TypeDescriptor
                 .GetProperties(typeof(T))
                 .OfType<PropertyDescriptor>()
                 .Where(propertyDescriptor => propertyDescriptor.Attributes.OfType<JsonApiIdAttribute>().Any() == false)
-                .ToDictionary(descriptor => descriptor.Name.ToLower(), value => value);
-            m_Attributes = new Dictionary<string, object>();
+                .ToDictionary(descriptor => descriptor.Name, value => value);
+            ;
+            foreach (var keyValuePair in propertyDescriptors)
+            {
+                if (keyValuePair.Value.Attributes.OfType<JsonApiRelation>().Any())
+                {
+                    m_RelationPropertyDescriptor.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+                else
+                {
+                    m_AttributePropertyDescriptor.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+            }
+
             Set(record);
         }
 
@@ -31,16 +44,15 @@ namespace Ifx.JsonApi
             set => m_JsonApiId.Set(value);
         }
 
+        public string Type => typeof(T).Name;
+
         public IDictionary<string, object> Attributes => m_Attributes;
+
+        public IDictionary<string, JsonApiRelationValue> Relationships { get; set; }
 
         public T Get()
         {
-            foreach (var attribute in m_Attributes)
-            {
-                var propertyDescriptor = m_propertyDescriptor[attribute.Key.ToLower()];
-
-                propertyDescriptor.SetValue(m_Record, attribute.Value);
-            }
+            m_AttributePropertyDescriptor.ReadValuesFromDictionary(m_Attributes, m_Record);
 
             return m_Record;
         }
@@ -51,12 +63,7 @@ namespace Ifx.JsonApi
 
             m_JsonApiId = new JsonApiId<T>(record);
 
-            m_Attributes.Clear();
-
-            foreach (var descriptor in m_propertyDescriptor.Values)
-            {
-                m_Attributes.Add(descriptor.Name.ToLower(), descriptor.GetValue(m_Record));
-            }
+            m_AttributePropertyDescriptor.WriteValuesToDictionary(m_Attributes, m_Record);
         }
     }
 }

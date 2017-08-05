@@ -13,15 +13,15 @@ namespace Manga.Api.Controllers
     [ApiVersion("0")]
     public class SeriesController : Controller
     {
-        private readonly IRepository<string, Series> m_repository;
+        private readonly IRepository<string, string, Series> m_repository;
 
         public SeriesController(IRepositoryFactory repositoryFactory)
         {
-            m_repository = repositoryFactory.CreateRepository<string, Series>();
+            m_repository = repositoryFactory.CreateRepository<string, string, Series>();
         }
 
         // GET: api/MangaSeries
-        [HttpGet("api/Manga/Series", Name = "Get")]
+        [HttpGet("api/Manga/Series", Name = "SeriesGet")]
         public IActionResult Get()
         {
             var records = m_repository.GetAll();
@@ -30,19 +30,26 @@ namespace Manga.Api.Controllers
         }
 
         // GET: api/MangaSeries/5
-        [HttpGet("api/Manga/Series/{id}", Name = "GetById")]
+        [HttpGet("api/Manga/Series/{id}", Name = "SeriesGetById")]
         public IActionResult Get(string id)
         {
-            var record = m_repository.Get(id);
+            var record = m_repository.Get(new KeyValue<string, string>()
+            {
+                Id = id
+            });
             return Ok(new JsonApiBody<Series>(new[] { record }));
         }
 
         // POST: api/MangaSeries
-        [HttpPost("api/Manga/Series")]
-        public IActionResult Post([FromBody]JsonApiDocument<Series> document)
+        [HttpPost("api/Manga/Series", Name = "SeriesPost")]
+        public IActionResult Post([FromBody]JsonApiDocument<Series> dataDocument)
         {
-            var record = document.Get();
-            m_repository.AddOrUpdate(record, series => series.SeriesId);
+            var record = dataDocument.Get();
+            m_repository.AddOrUpdate(record, series => new KeyValue<string, string>()
+            {
+                Id = series.SeriesId
+            });
+
 
             var body = new JsonApiBody<Series>(new[] { record });
 
@@ -50,11 +57,15 @@ namespace Manga.Api.Controllers
         }
 
         // PUT: api/MangaSeries/5
-        [HttpPut("api/Manga/Series/{id}")]
-        public IActionResult Put(string id, [FromBody]JsonApiDocument<Series> document)
+        [HttpPut("api/Manga/Series/{id}", Name = "SeriesPut")]
+        public IActionResult Put(string id, [FromBody]JsonApiDocument<Series> dataDocument)
         {
-            var record = document.Get();
-            m_repository.AddOrUpdate(record, series => id);
+            var record = dataDocument.Get();
+
+            m_repository.AddOrUpdate(record, series => new KeyValue<string, string>()
+            {
+                Id = id
+            });
 
             var body = new JsonApiBody<Series>(new[] { record });
 
@@ -62,10 +73,13 @@ namespace Manga.Api.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("api/Manga/Series/{id}")]
+        [HttpDelete("api/Manga/Series/{id}", Name = "SeriesDelete")]
         public IActionResult Delete(string id)
         {
-            m_repository.RemoveById(id);
+            m_repository.RemoveById(new KeyValue<string, string>()
+            {
+                Id = id
+            });
 
             return Ok();
         }

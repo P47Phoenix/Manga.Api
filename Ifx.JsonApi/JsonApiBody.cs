@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Ifx.JsonApi
 {
-    public class JsonApiBody<T> where T : class, new()
+    public class JsonApiBody<T> : IJsonApiLinks where T : class, new()
     {
         public JsonApiBody(IEnumerable<T> documents)
         {

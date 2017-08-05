@@ -6,32 +6,34 @@ namespace Manga.Api.Controllers
 {
     public class MockRepositoryFactory : IRepositoryFactory
     {
-        private class GenericKey<T, T1> where T1 : class
+        private class GenericKey<TId, TRefId, TRecord> where TRecord : class
         { }
 
         private readonly Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
 
 
-        public IRepository<T, T1> CreateRepository<T, T1>() where T1 : class
+        public IRepository<TId, TRefId, TRecord> CreateRepository<TId, TRefId, TRecord>() where TRecord : class
         {
-            var key = typeof(GenericKey<T, T1>);
+            var key = typeof(GenericKey<TId, TRefId, TRecord>);
 
-            if (_dictionary.ContainsKey(key)) return (IRepository<T, T1>) _dictionary[key];
+            if (_dictionary.ContainsKey(key)) return (IRepository<TId, TRefId, TRecord>)_dictionary[key];
 
-            if (typeof(Chapter) == typeof(T1) && typeof(string) == typeof(T))
+            switch (key)
             {
-                _dictionary.Add(key, BuildSimulatorModel.GetMangaChapter());
-            }
-            else if (typeof(Series) == typeof(T1) && typeof(string) == typeof(T))
-            {
-                _dictionary.Add(key, BuildSimulatorModel.GetSeriesChapter());
-            }
-            else
-            {
-                throw new InvalidOperationException($"Factory does not support the requested repository of {typeof(IRepository<T, T1>).Name}");
+                case Type t when t == typeof(GenericKey<string, string, Chapter>):
+                    _dictionary.Add(key, BuildSimulatorModel.GetMangaChapter());
+                    break;
+                case Type t when t == typeof(GenericKey<string, string, Series>):
+                    _dictionary.Add(key, BuildSimulatorModel.GetSeriesChapter());
+                    break;
+                case Type t when t == typeof(GenericKey<string, string, Page>):
+                    _dictionary.Add(key, BuildSimulatorModel.GetPageChapter());
+                    break;
+                default:
+                    throw new InvalidOperationException($"Factory does not support the requested repository of {typeof(IRepository<TId, TRefId, TRecord>).Name}");
             }
 
-            return (IRepository<T, T1>)_dictionary[key];
+            return (IRepository<TId, TRefId, TRecord>)_dictionary[key];
         }
     }
 }

@@ -4,6 +4,6 @@ namespace Manga.Api.Controllers
 {
     public interface IRepositoryFactory
     {
-        IRepository<T, T1> CreateRepository<T, T1>() where T1 : class;
+        IRepository<TId, TRefId, TRecord> CreateRepository<TId, TRefId, TRecord>() where TRecord : class;
     }
 }
