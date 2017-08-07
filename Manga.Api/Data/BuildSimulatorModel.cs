@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Manga.Api.Models;
-using Microsoft.EntityFrameworkCore.Storage;
-using Newtonsoft.Json.Linq;
 
-namespace Manga.Api.Controllers
+namespace Manga.Api.Data
 {
     internal static class BuildSimulatorModel
     {

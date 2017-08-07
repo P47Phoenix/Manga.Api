@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     public class JsonApiId<T> where T : class, new()
     {

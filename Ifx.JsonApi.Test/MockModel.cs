@@ -1,4 +1,6 @@
-﻿namespace Ifx.JsonApi.Test
+﻿using Ifx.JsonApi.JsonApi;
+
+namespace Ifx.JsonApi.Test
 {
     public class MockModel
     {

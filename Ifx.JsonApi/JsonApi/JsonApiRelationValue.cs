@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     public class JsonApiRelationValue : IJsonApiLinks
     {

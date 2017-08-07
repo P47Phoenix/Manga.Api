@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Manga.Api.Models;
 
-namespace Manga.Api.Controllers
+namespace Manga.Api.Data
 {
     public interface IRepository<TId, TRefKey, TRecord>
         where TRecord : class

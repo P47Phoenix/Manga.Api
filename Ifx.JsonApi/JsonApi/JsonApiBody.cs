@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     public class JsonApiBody<T> : IJsonApiLinks where T : class, new()
     {
-        public JsonApiBody(IEnumerable<T> documents)
+        public JsonApiBody(IEnumerable<T> documents, IUrlHelper urlHelper)
         {
             Links = new Dictionary<string, string>();
-            Body = documents.Select(d => new JsonApiDocument<T>(d)).ToList();
+            Body = documents.Select(d => new JsonApiDocument<T>(d, urlHelper)).ToList();
         }
 
         public Dictionary<string, string> Links { get; }

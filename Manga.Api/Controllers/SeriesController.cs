@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ifx.JsonApi;
+using Ifx.JsonApi.JsonApi;
+using Manga.Api.Data;
 using Manga.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,7 @@ namespace Manga.Api.Controllers
         {
             var records = m_repository.GetAll();
 
-            return Ok(new JsonApiBody<Series>(records));
+            return Ok(new JsonApiBody<Series>(records, Url));
         }
 
         // GET: api/MangaSeries/5
@@ -37,7 +39,7 @@ namespace Manga.Api.Controllers
             {
                 Id = id
             });
-            return Ok(new JsonApiBody<Series>(new[] { record }));
+            return Ok(new JsonApiBody<Series>(new[] { record }, Url));
         }
 
         // POST: api/MangaSeries
@@ -51,7 +53,7 @@ namespace Manga.Api.Controllers
             });
 
 
-            var body = new JsonApiBody<Series>(new[] { record });
+            var body = new JsonApiBody<Series>(new[] { record }, Url);
 
             return CreatedAtRoute("GetById", new { Id = record.SeriesId }, body);
         }
@@ -67,7 +69,7 @@ namespace Manga.Api.Controllers
                 Id = id
             });
 
-            var body = new JsonApiBody<Series>(new[] { record });
+            var body = new JsonApiBody<Series>(new[] { record }, Url);
 
             return CreatedAtRoute("GetById", new { Id = record.SeriesId }, body);
         }

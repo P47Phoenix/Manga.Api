@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-
-namespace Manga.Api.Controllers
+﻿namespace Manga.Api.Data
 {
     public interface IRepositoryFactory
     {

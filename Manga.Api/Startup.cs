@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using Manga.Api.Controllers;
+using Manga.Api.Data;
 
 namespace Manga.Api
 {

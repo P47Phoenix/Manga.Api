@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Manga.Api.Controllers
+namespace Manga.Api.Data
 {
     public class DictionaryRepository<TId, TRefKey, TRecord> : IRepository<TId, TRefKey, TRecord>
         where TRecord : class

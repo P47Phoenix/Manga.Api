@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ifx.JsonApi;
+using Ifx.JsonApi.JsonApi;
 
 namespace Manga.Api.Models
 {

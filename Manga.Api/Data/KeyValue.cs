@@ -1,4 +1,4 @@
-namespace Manga.Api.Controllers
+namespace Manga.Api.Data
 {
     public class KeyValue<TId, TRefId>
     {

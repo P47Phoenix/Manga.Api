@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Ifx.JsonApi.JsonApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Ifx.JsonApi.Test

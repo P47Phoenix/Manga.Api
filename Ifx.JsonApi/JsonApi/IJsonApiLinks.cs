@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     public interface IJsonApiLinks
     {

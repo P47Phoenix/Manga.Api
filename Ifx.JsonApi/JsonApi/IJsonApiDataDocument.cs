@@ -1,6 +1,6 @@
 using System;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     public interface IJsonApiDataDocument
     {

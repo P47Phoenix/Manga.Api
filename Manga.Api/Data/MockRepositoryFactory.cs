@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Manga.Api.Models;
 
-namespace Manga.Api.Controllers
+namespace Manga.Api.Data
 {
     public class MockRepositoryFactory : IRepositoryFactory
     {

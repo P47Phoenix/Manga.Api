@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Ifx.JsonApi
+namespace Ifx.JsonApi.JsonApi
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class JsonApiIdAttribute : Attribute

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ifx.JsonApi;
+using Ifx.JsonApi.JsonApi;
+using Manga.Api.Data;
 using Manga.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,7 @@ namespace Manga.Api.Controllers
         {
             var records = m_repository.GetAll(value => value.RefId == GetRefId(mangaSeriesId, chapterId));
 
-            return Ok(new JsonApiBody<Page>(records));
+            return Ok(new JsonApiBody<Page>(records, Url));
         }
 
         // GET: api/Page/5
@@ -35,7 +37,7 @@ namespace Manga.Api.Controllers
         {
             var record = m_repository.Get(GetKeyValue(mangaSeriesId, chapterId, id));
 
-            return Ok(new JsonApiBody<Page>(new[] { record }));
+            return Ok(new JsonApiBody<Page>(new[] { record }, Url));
         }
 
         // POST: api/Page
@@ -46,7 +48,7 @@ namespace Manga.Api.Controllers
 
             m_repository.AddOrUpdate(model, page => GetKeyValue(mangaSeriesId, chapterId, page.PageId));
 
-            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }));
+            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }, Url));
         }
 
         private static string GetRefId(string mangaSeriesId, string chapterId)
@@ -62,7 +64,7 @@ namespace Manga.Api.Controllers
 
             m_repository.AddOrUpdate(model, page => GetKeyValue(mangaSeriesId, chapterId, id));
 
-            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }));
+            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }, Url));
         }
 
         private static KeyValue<string, string> GetKeyValue(string mangaSeriesId, string chapterId, string id)
