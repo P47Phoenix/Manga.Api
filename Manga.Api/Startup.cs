@@ -71,7 +71,6 @@ namespace Manga.Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(
