@@ -28,7 +28,17 @@ namespace Ifx.JsonApi.JsonApi
 
             foreach (var relation in relations)
             {
-                dictionary.Add(relation.key, relation.jsonApiRelationValue);
+                if (dictionary.ContainsKey(relation.key))
+                {
+                    var jsonApiRelationValue = dictionary[relation.key];
+
+                    jsonApiRelationValue.Data.AddRange(relation.Item2.Data);
+                }
+                else
+                {
+                    dictionary.Add(relation.key, relation.jsonApiRelationValue);
+                }
+
             }
 
         }
@@ -53,10 +63,10 @@ namespace Ifx.JsonApi.JsonApi
                 var jsonApiRelationValue = new JsonApiRelationValue
                 {
                     Links = GetLinks(link),
-                    Data = GetData(typeof(T), value).ToList()
+                    Data = GetData(attribute.ModelName, value).ToList()
                 };
 
-                var name = record.GetType().Name;
+                var name = attribute.ModelName;
 
                 yield return (name, jsonApiRelationValue);
             }
@@ -78,7 +88,7 @@ namespace Ifx.JsonApi.JsonApi
             };
         }
 
-        private static IEnumerable<JsonApiDataDocument> GetData(Type documentType, object value)
+        private static IEnumerable<JsonApiDataDocument> GetData(string modelName, object value)
         {
             var enumerable = value as IEnumerable;
             if (enumerable != null)
@@ -87,12 +97,12 @@ namespace Ifx.JsonApi.JsonApi
 
                 foreach (var val in values)
                 {
-                    yield return new JsonApiDataDocument(documentType, val);
+                    yield return new JsonApiDataDocument(modelName, val);
                 }
             }
             else
             {
-                yield return new JsonApiDataDocument(documentType, value);
+                yield return new JsonApiDataDocument(modelName, value);
             }
         }
 

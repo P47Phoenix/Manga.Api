@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
 using Manga.Api.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using Manga.Api.Controllers;
 using Manga.Api.Data;
+using Manga.Api.Data.DynamoDb;
 
 namespace Manga.Api
 {
@@ -38,7 +40,10 @@ namespace Manga.Api
             // Add framework services.
             services.AddMvc();
 
-            services.AddSingleton<IRepositoryFactory, MockRepositoryFactory>();
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonDynamoDB>();
+
+            services.AddSingleton<IRepositoryFactory, DynamoDbRepositoryFactory>();
 
             services.AddApiVersioning(o => o.ReportApiVersions = true);
             services.AddSwaggerGen(

@@ -9,7 +9,6 @@ using Manga.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Manga.Api.Controllers
 {
@@ -29,7 +28,7 @@ namespace Manga.Api.Controllers
         {
             var chapters = m_repository.GetAll(key => key.RefId == seriesId).ToList();
 
-            return Ok(new JsonApiBody<Chapter>(chapters, Url));
+            return Ok(new JsonApiDocument<Chapter>(chapters, Url));
         }
 
         [HttpGet("api/Manga/Series/{seriesId}/Chapter/{id}", Name = "ChapterGetById")]
@@ -51,12 +50,12 @@ namespace Manga.Api.Controllers
                 });
             }
 
-            return Ok(new JsonApiBody<Chapter>(new[] { chapter }, Url));
+            return Ok(new JsonApiDocument<Chapter>(new[] { chapter }, Url));
         }
 
         // POST: api/MangaChapter
         [HttpPost("api/Manga/Series/{seriesId}/Chapter", Name = "ChapterPost")]
-        public IActionResult Post(string seriesId, [FromBody]JsonApiDocument<Chapter> value)
+        public IActionResult Post(string seriesId, [FromBody]JsonApiData<Chapter> value)
         {
             var model = value.Get();
 
@@ -66,13 +65,13 @@ namespace Manga.Api.Controllers
                 RefId = seriesId
             });
 
-            var body = new JsonApiBody<Chapter>(new[] { model }, Url);
+            var body = new JsonApiDocument<Chapter>(new[] { model }, Url);
 
             return CreatedAtRoute("MangaChapterGetById", new { id = model.ChapterId, seriesId }, body);
         }
 
         [HttpPut("api/Manga/Series/{seriesId}/Chapter/{id}", Name = "ChapterPut")]
-        public IActionResult Put(string seriesId, string id, [FromBody]JsonApiDocument<Chapter> value)
+        public IActionResult Put(string seriesId, string id, [FromBody]JsonApiData<Chapter> value)
         {
             var model = value.Get();
 
@@ -83,7 +82,7 @@ namespace Manga.Api.Controllers
             });
 
 
-            var body = new JsonApiBody<Chapter>(new[] { model }, Url);
+            var body = new JsonApiDocument<Chapter>(new[] { model }, Url);
 
             return CreatedAtRoute("MangaChapterGetById", new { id = model.ChapterId, seriesId }, body);
         }

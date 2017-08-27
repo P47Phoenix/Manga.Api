@@ -28,7 +28,7 @@ namespace Manga.Api.Controllers
         {
             var records = m_repository.GetAll();
 
-            return Ok(new JsonApiBody<Series>(records, Url));
+            return Ok(new JsonApiDocument<Series>(records, Url));
         }
 
         // GET: api/MangaSeries/5
@@ -39,37 +39,37 @@ namespace Manga.Api.Controllers
             {
                 Id = id
             });
-            return Ok(new JsonApiBody<Series>(new[] { record }, Url));
+            return Ok(new JsonApiDocument<Series>(new[] { record }, Url));
         }
 
         // POST: api/MangaSeries
         [HttpPost("api/Manga/Series", Name = "SeriesPost")]
-        public IActionResult Post([FromBody]JsonApiDocument<Series> dataDocument)
+        public IActionResult Post([FromBody]JsonApiData<Series> dataData)
         {
-            var record = dataDocument.Get();
+            var record = dataData.Get();
             m_repository.AddOrUpdate(record, series => new KeyValue<string, string>()
             {
                 Id = series.SeriesId
             });
 
 
-            var body = new JsonApiBody<Series>(new[] { record }, Url);
+            var body = new JsonApiDocument<Series>(new[] { record }, Url);
 
             return CreatedAtRoute("GetById", new { Id = record.SeriesId }, body);
         }
 
         // PUT: api/MangaSeries/5
         [HttpPut("api/Manga/Series/{id}", Name = "SeriesPut")]
-        public IActionResult Put(string id, [FromBody]JsonApiDocument<Series> dataDocument)
+        public IActionResult Put(string id, [FromBody]JsonApiData<Series> dataData)
         {
-            var record = dataDocument.Get();
+            var record = dataData.Get();
 
             m_repository.AddOrUpdate(record, series => new KeyValue<string, string>()
             {
                 Id = id
             });
 
-            var body = new JsonApiBody<Series>(new[] { record }, Url);
+            var body = new JsonApiDocument<Series>(new[] { record }, Url);
 
             return CreatedAtRoute("GetById", new { Id = record.SeriesId }, body);
         }

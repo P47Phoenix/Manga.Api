@@ -4,10 +4,10 @@ namespace Ifx.JsonApi.JsonApi
 {
     public class JsonApiDataDocument : IJsonApiDataDocument
     {
-        public JsonApiDataDocument(Type resourceType, object id)
+        public JsonApiDataDocument(string resourceType, object id)
         {
             Id = id;
-            Type = resourceType.Name;
+            Type = resourceType;
         }
 
         public object Id { get; set; }

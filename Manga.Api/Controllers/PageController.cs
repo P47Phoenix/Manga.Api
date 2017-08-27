@@ -23,48 +23,48 @@ namespace Manga.Api.Controllers
         }
 
         // GET: api/Page
-        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter/{chapterId}", Name = "PageGet")]
-        public IActionResult Get(string mangaSeriesId, string chapterId)
+        [HttpGet("api/Manga/Series/{seriesId}/Chapter/{chapterId}/Page", Name = "PageGet")]
+        public IActionResult Get(string seriesId, string chapterId)
         {
-            var records = m_repository.GetAll(value => value.RefId == GetRefId(mangaSeriesId, chapterId));
+            var records = m_repository.GetAll(value => value.RefId == GetRefId(seriesId, chapterId));
 
-            return Ok(new JsonApiBody<Page>(records, Url));
+            return Ok(new JsonApiDocument<Page>(records, Url));
         }
 
         // GET: api/Page/5
-        [HttpGet("api/Manga/Series/{mangaSeriesId}/Chapter/{chapterId}/Page/{id}", Name = "PageGetById")]
-        public IActionResult Get(string mangaSeriesId, string chapterId, string id)
+        [HttpGet("api/Manga/Series/{seriesId}/Chapter/{chapterId}/Page/{id}", Name = "PageGetById")]
+        public IActionResult Get(string seriesId, string chapterId, string id)
         {
-            var record = m_repository.Get(GetKeyValue(mangaSeriesId, chapterId, id));
+            var record = m_repository.Get(GetKeyValue(seriesId, chapterId, id));
 
-            return Ok(new JsonApiBody<Page>(new[] { record }, Url));
+            return Ok(new JsonApiDocument<Page>(new[] { record }, Url));
         }
 
         // POST: api/Page
-        [HttpPost("api/Manga/Series/{mangaSeriesId}/Chapter/{chapterId}/Page", Name = "PagePost")]
-        public IActionResult Post(string mangaSeriesId, string chapterId, [FromBody]JsonApiDocument<Page> value)
+        [HttpPost("api/Manga/Series/{seriesId}/Chapter/{chapterId}/Page", Name = "PagePost")]
+        public IActionResult Post(string seriesId, string chapterId, [FromBody]JsonApiData<Page> value)
         {
             var model = value.Get();
 
-            m_repository.AddOrUpdate(model, page => GetKeyValue(mangaSeriesId, chapterId, page.PageId));
+            m_repository.AddOrUpdate(model, page => GetKeyValue(seriesId, chapterId, page.PageId));
 
-            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }, Url));
+            return AcceptedAtRoute("GetById", new { seriesId, chapterId, value.Id }, new JsonApiDocument<Page>(new[] { model }, Url));
         }
 
-        private static string GetRefId(string mangaSeriesId, string chapterId)
+        private static string GetRefId(string seriesId, string chapterId)
         {
-            return mangaSeriesId + "_" + chapterId;
+            return seriesId + "_" + chapterId;
         }
 
         // PUT: api/Page/5
-        [HttpPut("api/Manga/Series/{mangaSeriesId}/Chapter/{chapterId}/Page/{id}", Name = "PagePut")]
-        public IActionResult Put(string mangaSeriesId, string chapterId, string id, [FromBody]JsonApiDocument<Page> value)
+        [HttpPut("api/Manga/Series/{seriesId}/Chapter/{chapterId}/Page/{id}", Name = "PagePut")]
+        public IActionResult Put(string seriesId, string chapterId, string id, [FromBody]JsonApiData<Page> value)
         {
             var model = value.Get();
 
-            m_repository.AddOrUpdate(model, page => GetKeyValue(mangaSeriesId, chapterId, id));
+            m_repository.AddOrUpdate(model, page => GetKeyValue(seriesId, chapterId, id));
 
-            return AcceptedAtRoute("GetById", new { mangaSeriesId, chapterId, value.Id }, new JsonApiBody<Page>(new[] { model }, Url));
+            return AcceptedAtRoute("GetById", new { seriesId, chapterId, value.Id }, new JsonApiDocument<Page>(new[] { model }, Url));
         }
 
         private static KeyValue<string, string> GetKeyValue(string mangaSeriesId, string chapterId, string id)
@@ -77,10 +77,10 @@ namespace Manga.Api.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("api/Manga/Series/{mangaSeriesId}/Chapter/{chapterId}/Page/{id}", Name = "PageDelete")]
-        public IActionResult Delete(string mangaSeriesId, string chapterId, string id)
+        [HttpDelete("api/Manga/Series/{seriesId}/Chapter/{chapterId}/Page/{id}", Name = "PageDelete")]
+        public IActionResult Delete(string seriesId, string chapterId, string id)
         {
-            m_repository.RemoveById(GetKeyValue(mangaSeriesId, chapterId, id));
+            m_repository.RemoveById(GetKeyValue(seriesId, chapterId, id));
             return Ok();
         }
     }
